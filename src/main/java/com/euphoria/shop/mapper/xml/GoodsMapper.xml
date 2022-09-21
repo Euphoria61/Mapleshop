@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.euphoria.shop.mapper.GoodsMapper">
+    <select id="selectByWord" resultType="Goods">
+        select *
+        from goods
+                 inner join goods_cate gc on goods.goods_cate_id = gc.goods_cate_id
+        where concat(goods.name, gc.name, details)
+                  Like concat('%', #{word}, '%')
+    </select>
+
+    <update id="reduceGoodsStore">
+        update goods
+        set goods.store = 10
+        where goods_id = 1
+    </update>
+
+    <update id="incrGoodsStore">
+        update goods
+        set goods.store =goods.store + ${goodsCount}
+        where goods_id = #{goodsId}
+    </update>
+</mapper>

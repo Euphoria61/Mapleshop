@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "spring.mvc.view.static-path-pattern",
+      "type": "java.lang.String",
+      "description": "Description for spring.mvc.view.static-path-pattern."
+    },
+    {
+      "name": "rocketmq.producer.send-message-timeout",
+      "type": "java.lang.String",
+      "description": "Description for rocketmq.producer.send-message-timeout."
+    },
+    {
+      "name": "jwt.header",
+      "type": "java.lang.String",
+      "description": "Description for jwt.header."
+    },
+    {
+      "name": "jwt.tokenPrefix",
+      "type": "java.lang.String",
+      "description": "Description for jwt.tokenPrefix."
+    },
+    {
+      "name": "spring.jpa.hibernate.show-sql",
+      "type": "java.lang.String",
+      "description": "Description for spring.jpa.hibernate.show-sql."
+    }
+  ]
+}
