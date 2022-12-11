@@ -5,6 +5,7 @@ import com.euphoria.shop.entity.LoginUser;
 import com.euphoria.shop.entity.User;
 import com.euphoria.shop.mapper.MenuMapper;
 import com.euphoria.shop.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +20,7 @@ import java.util.List;
  * @description: 手机号登录
  * @date: 2022/9/9 21:46
  */
+@Slf4j
 @Service("MobileUserDetailsServiceImpl")
 public class MobileUserDetailsServiceImpl implements UserDetailsService {
 
@@ -30,7 +32,7 @@ public class MobileUserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        System.out.println("手机号登录");
+        log.info("接受手机号为",phone);
         //根据手机号查询用户信息
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getTelephone, phone);

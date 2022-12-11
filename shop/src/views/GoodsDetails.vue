@@ -63,7 +63,7 @@
         <div>
           <div style="float: left; margin-top: 20px; margin-left: 120px">
             <img
-                :src="'/api/files/' + goodsLists.gpicture"
+                :src="'/api/files/' + goodsLists.picture"
                 alt=""
                 style="width: 300px; height: 300px"
             />
@@ -130,11 +130,11 @@
                     float: left;
                   "
                 >
-                  {{ goodsLists.gname }}
+                  {{ goodsLists.name }}
                 </h3></el-descriptions-item
               >
 
-              <el-descriptions-item label="分类：" label-class-name="my-label"
+              <!-- <el-descriptions-item label="分类：" label-class-name="my-label"
               >
                 <el-link
                     :underline="false"
@@ -144,24 +144,24 @@
                 </el-link
                 >
               </el-descriptions-item
-              >
+              > -->
 
               <el-descriptions-item label="价格:" label-class-name="my-label"
               ><s style="margin-left: 50px"
-              >¥{{ goodsLists.gpriceOld }}</s
+              >¥{{ goodsLists.priceOld }}</s
               ></el-descriptions-item
               >
 
               <el-descriptions-item label="促销价:" label-class-name="my-label"
               ><h1 style="margin-left: 100px; color: rgb(255, 0, 54)">
-                ¥{{ goodsLists.gpriceNew }}
+                ¥{{ goodsLists.priceNew }}
               </h1></el-descriptions-item
               >
               <el-descriptions-item
                   label="剩余："
                   label-class-name="my-label"
                   style="color: rgb(243, 243, 243)"
-              >{{ goodsList.gstore }}件
+              >{{ goodsList.store }}件
               </el-descriptions-item
               >
 
@@ -183,14 +183,14 @@
               </el-button
               >
             </div>
-
+<!-- 确认订单 -->
             <el-dialog v-model="dialog" title="确认订单" width="30%">
               <h3>商品名称：</h3>
-              {{ goodsLists.gname }} <br/>
+              {{ goodsLists.name }} <br/>
               <h3>商品价格：</h3>
-              ¥{{ goodsLists.gpriceNew }}<br/>
+              ¥{{ goodsLists.priceNew }}<br/>
               <h3>购买数量：</h3>
-              {{ buyCount }}
+              {{ goodsCount }}
               <h3>总金额：</h3>
               ¥{{ all }}
               <template #footer>
@@ -268,50 +268,35 @@ export default {
       userId: 0,
       code: 0,
       sCount: 1,
-      buyCount: 1,
+      goodsCount: 1,
       comments: [],
-
+      UserCart:{},
       goodsLists: [],
       goodsList: [],
       dialog: false,
+      form:{},
     };
   },
   methods: {
     load() {
+      
       if (JSON.parse(sessionStorage.getItem("user")) != null)
         this.userId = JSON.parse(sessionStorage.getItem("user")).userId;
-      request.get("/selectGoodsDetails/" + this.gId).then((res) => {
+      request.get("/goods/selectGoodsDetails/" + this.gId).then((res) => {
         this.goodsList = res.data;
         this.goodsLists = JSON.parse(JSON.stringify(this.goodsList));
-        console.log(this.goodsLists);
+        
       });
-      if (this.userId != 0) {
-        request.get("/queryIsCollected/" + this.gId).then((res) => {
-          this.isCollect = res.data;
-        });
-      }
-
-      request.get("/queryComment/" + this.gId).then((res) => {
-        this.comment = res.data;
-        this.comments = JSON.parse(JSON.stringify(this.comment));
-
-        console.log(this.comments);
-
-        console.log(this.comments[0].comment_rate);
-      });
+      
+   
     },
     collection() {
-      if (this.isCollect == 1) {
+      
         request
-            .delete("/deleteCollections/" + this.userId + "/" + this.gId)
+            .post("/collection/addAllCollection/"  + this.gId)
             .then((res) => {
-            });
-        this.isCollect = 0;
-      } else {
-        request
-            .put("/addCollections/" + this.userId + "/" + this.gId)
-            .then((res) => {
-              if (res.code === "0") {
+              console.log(res);
+                if (res.code === 200) {
                 this.$message.success("收藏成功！");
                 this.isCollect = 1;
                 this.load();
@@ -320,56 +305,59 @@ export default {
                 this.$router.push("/login");
               }
             });
-      }
+        this.isCollect = 1;
+
+      
     },
+    //添加购物车
     addCartGoods() {
+     this.UserCart.goodsId = this.gId 
+     this.UserCart.goodsCount = this.sCount
+     console.log(this.UserCart);
       request
-          .put(
-              "/addCartGoods/" + this.userId + "/" + this.gId + "/" + this.sCount
+          .post(
+              "/userCart/addCart",this.UserCart
           )
           .then((res) => {
-            if (res.code === "0") {
+            if (res.code === 200) {
               this.$message.success("添加成功！");
 
               this.load();
             } else {
               this.$message({
                 type: "error",
-                message: res.msg,
+                message: res.messsage,
               });
-              this.$router.push("/login");
+              // this.$router.push("/login");
             }
           });
     },
-    buyGood() {
-
+    buyGood() {  
+      console.log(this.goodsCount);
+      this.form.goodsName =this.goodsLists.name,
+      this.form.goodsAmountTotal = this.all,
+      this.form.goodsId = this.gId,
+      this.form.goodsCount = this.goodsCount,
       request
-          .put(
-              "/confirmGoodsOrder/" +
-              this.userId +
-              "/" +
-              this.gId +
-              "/" +
-              this.buyCount
+          .post(
+              "/order/generateOrder" ,
+             this.form 
+            
           )
           .then((res) => {
-            if (res.code === "0") {
-
-
-              var formData = new FormData();
-              formData.append("code", res.data);
-              formData.append("subject", this.goodsLists.gname);
-              formData.append("money", this.goodsLists.gpriceNew);
-              request.put("/payGoods", formData).then((res) => {
-                this.dialog = false;
+            if (res.code === 200) {
+       
+            this.$message({
+                type: "success",
+                message: "购买成功！",
               });
-              this.code = 0;
             } else {
               this.$message({
                 type: "error",
                 message: res.msg,
               });
             }
+                            this.dialog = false;
           });
     },
   },
@@ -378,7 +366,7 @@ export default {
   },
   computed: {
     all: function () {
-      return parseInt(this.goodsLists.gpriceNew) * parseInt(this.buyCount);
+      return parseInt(this.goodsLists.priceNew) * parseInt(this.goodsCount);
     },
   },
 };

@@ -40,7 +40,7 @@ public class UserCartServiceImp extends ServiceImpl<UserCartMapper, UserCart> im
                 new MPJLambdaWrapper<UserCartVo>().selectAll(UserCart.class)
                         .select(Goods::getName, Goods::getPicture, Goods::getPriceNew, Goods::getPriceOld, Goods::getStore)
                         .leftJoin(Goods.class, Goods::getGoodsId, UserCart::getGoodsId)
-                        .eq(UserCart::getUserId, userCart)
+                        .eq(UserCart::getUserId, userCart.getUserId())
                         .orderByDesc(UserCart::getUserCartId)
         );
         return goodsPage.getRecords();

@@ -2,6 +2,7 @@ package com.euphoria.shop.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.euphoria.shop.entity.Goods;
+import com.euphoria.shop.entity.vo.GoodsToVo;
 import com.euphoria.shop.entity.vo.GoodsVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,7 +19,7 @@ import java.util.List;
  */
 public interface GoodsService extends IService<Goods> {
     //已上架商品
-    List<Goods> selectShelfedGoods(@Param("currentPage") int currentPage, @Param("PageSize") int pageSize);
+    GoodsToVo selectShelfedGoods(@Param("currentPage") int currentPage, @Param("PageSize") int pageSize);
 
     //据商品类别查询已上架商品
     List<Goods> selectByCate(@Param("currentPage") int currentPage, @Param("PageSize") int pageSize, @Param("cate") String cate);
@@ -36,4 +37,5 @@ public interface GoodsService extends IService<Goods> {
 
     int incrGoodsStore(Long goodsId, Long goodsCount);
 
+    Goods selectGoodsDetails(Long gid);
 }

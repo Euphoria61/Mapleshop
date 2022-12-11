@@ -1,5 +1,7 @@
 package com.euphoria.shop.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.euphoria.shop.entity.Collections;
 import com.euphoria.shop.service.CollectionService;
 import com.euphoria.shop.common.ResultInfo;
 import com.euphoria.shop.common.annotation.LoginUser;
@@ -29,20 +31,27 @@ public class CollectionController {
 
 
     @ApiOperation("显示全部收藏")
-    @PreAuthorize("hasAuthority('sys:collection:selectAll')")
+    //@PreAuthorize("hasAuthority('sys:collection:selectAll')")
     @GetMapping("/selectAllCollection")
     public ResultInfo<List<CollectionVo>> selectAllCollection(@LoginUser Long userId,
                                                                @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
                                                               @RequestParam(value = "pageSize", defaultValue = "20") int pageSize
     ) {
+
+        userId =1556169985301184514L;
         return ResultInfo.success(collectionService.selectAllCollection(currentPage, pageSize, userId));
     }
 
+
+
+
+
     @ApiOperation("添加收藏")
-    @PreAuthorize("hasAuthority('sys:collection:selectAll')")
-    @GetMapping("/addAllCollection")
-    public ResultInfo<?> selectAllCollection(@LoginUser Long userId,@RequestParam Long goodsId
+    //@PreAuthorize("hasAuthority('sys:collection:selectAll')")
+    @PostMapping("/addAllCollection/{goodsId}")
+    public ResultInfo<?> selectAllCollection(@LoginUser Long userId,@PathVariable Long goodsId
     ) {
+        userId =1556169985301184514L;
         return collectionService.addCollection(userId, goodsId) == 0 ? ResultInfo.success():ResultInfo.failed("已收藏该商品！");
     }
 

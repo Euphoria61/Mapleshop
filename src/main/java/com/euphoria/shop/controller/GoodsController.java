@@ -1,6 +1,7 @@
 package com.euphoria.shop.controller;
 
 
+import com.euphoria.shop.entity.vo.GoodsToVo;
 import com.euphoria.shop.service.GoodsService;
 import com.euphoria.shop.common.ResultInfo;
 import com.euphoria.shop.entity.Goods;
@@ -32,13 +33,23 @@ public class GoodsController {
 
     @ApiOperation("显示首页已上架商品")
     @GetMapping("/selectGoods")
-    @PreAuthorize("hasAuthority('sys:goods:selectShelfed')")
-    public ResultInfo<List<Goods>> selectGoods(@RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
-                                               @RequestParam(value = "pageSize", defaultValue = "20") int pageSize) {
+
+    public ResultInfo<GoodsToVo> selectGoods(@RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
+                                             @RequestParam(value = "pageSize", defaultValue = "20") int pageSize) {
         return ResultInfo.success(goodsService.selectShelfedGoods(currentPage, pageSize));
     }
+
+
+
+
+    @ApiOperation("显示商品详细信息")
+    @GetMapping("/selectGoodsDetails/{gid}")
+
+    public ResultInfo<Goods> selectGoodsDetails(@PathVariable Long gid) {
+        return ResultInfo.success(goodsService.selectGoodsDetails(gid));
+    }
     @ApiOperation("显示类型搜索已上架商品")
-    @PreAuthorize("hasAuthority('sys:goods:selectByCate')")
+    //@PreAuthorize("hasAuthority('sys:goods:selectByCate')")
     @GetMapping("/selectByCate")
     public ResultInfo<List<Goods>> selectByCate(@RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
                                                 @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
@@ -47,7 +58,7 @@ public class GoodsController {
         return ResultInfo.success(goodsService.selectByCate(currentPage, pageSize, cate));
     }
     @ApiOperation("显示关键词搜索已上架商品")
-    @PreAuthorize("hasAuthority('sys:goods:selectByWord')")
+    //@PreAuthorize("hasAuthority('sys:goods:selectByWord')")
     @GetMapping("/selectByWord/{word}")
     public ResultInfo<List<Goods>> goodsByWord(@RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
                                                @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
@@ -62,17 +73,17 @@ public class GoodsController {
     }
 
     @ApiOperation("添加或修改商品")
-    @PreAuthorize("hasAuthority('sys:goods:addGoods')")
+   // @PreAuthorize("hasAuthority('sys:goods:addGoods')")
     @PostMapping("/addGoods")
     public ResultInfo<?> saveOrUpdateGoods(GoodsVo goodsVo) throws FileNotFoundException {
         return goodsService.saveOrUpdateGoods(goodsVo) == 0 ? ResultInfo.failed("操作失败") : ResultInfo.success();
     }
 
     @ApiOperation("ID查询商品")
-    @PreAuthorize("hasAuthority('sys:goods:selectGoodsById')")
-    @PostMapping("/selectGoodsById")
-    public ResultInfo<Goods> selectGoodsById(@RequestParam Long goodsId) {
-        return goodsService.selectGoodsById(goodsId) == null ? ResultInfo.failed("查询失败") : ResultInfo.success();
+    //@PreAuthorize("hasAuthority('sys:goods:selectGoodsById')")
+    @PostMapping("/selectGoodsById/{goodsId}")
+    public ResultInfo<Goods> selectGoodsById(@PathVariable Long goodsId) {
+        return goodsService.selectGoodsById(goodsId) == null ? ResultInfo.failed("查询失败") : ResultInfo.success(goodsService.selectGoodsById(goodsId));
     }
 
     @ApiOperation("删除商品")

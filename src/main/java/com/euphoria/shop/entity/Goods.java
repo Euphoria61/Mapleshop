@@ -37,6 +37,8 @@ public class Goods implements Serializable {
     @ApiModelProperty("商品名称")
     private String name;
 
+
+
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @ApiModelProperty("原价")
     private BigDecimal priceOld;
@@ -59,6 +61,8 @@ public class Goods implements Serializable {
 
     @ApiModelProperty("详细信息")
     private String details;
+
+
 
     @ApiModelProperty("创建时间")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)

@@ -22,7 +22,7 @@
 // */
 //@Component
 //public class MobileCodeTokenFilter extends AbstractAuthenticationProcessingFilter {
-//    public static final String SPRING_SECURITY_FORM_MOBILE_KEY = "userName";
+//    public static final String SPRING_SECURITY_FORM_MOBILE_KEY = "username";
 //    public static final String SPRING_SECURITY_FORM_CODE_KEY = "password";
 //    private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/user/login", "POST");
 //    private String mobileParameter = SPRING_SECURITY_FORM_MOBILE_KEY;

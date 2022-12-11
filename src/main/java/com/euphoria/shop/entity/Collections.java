@@ -1,9 +1,6 @@
 package com.euphoria.shop.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -22,6 +19,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
+@TableName(value = "collection")
 @ApiModel(value = "Collection对象", description = "收藏")
 public class Collections implements Serializable {
 

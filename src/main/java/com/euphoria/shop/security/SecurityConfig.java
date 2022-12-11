@@ -2,7 +2,8 @@ package com.euphoria.shop.security;
 
 
 import com.euphoria.shop.security.filter.JwtAuthenticationTokenFilter;
-
+import com.euphoria.shop.security.filter.MobileAuthenticationProvider;
+import com.euphoria.shop.security.filter.UserNameAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,13 +27,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     @Qualifier("MobileUserDetailsServiceImpl")
     private UserDetailsService userDetailsService;
+
+    @Qualifier("UserDetailsServiceImpl")
+    @Autowired
+    private UserDetailsService userdefaultService;
+
     @Autowired
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
-//    @Autowired
-//    private MobileCodeTokenFilter mobileCodeTokenFilter;
-//
-//    @Autowired
-//    private MobileAuthenticationProvider mobileAuthenticationProvider;
+    @Autowired
+    UserNameAuthenticationProvider userNameAuthenticationProvider;
+    @Autowired
+    private MobileAuthenticationProvider mobileAuthenticationProvider;
     /**
      * 自定义用户认证逻辑
      */
@@ -114,7 +120,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        //mobileCodeTokenFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
 //        MobileAuthenticationProvider mobileAuthenticationProvider =new MobileAuthenticationProvider();
 //        mobileAuthenticationProvider.setUserDetailsService(userDetailsService);
-//        http.addFilterBefore(mobileCodeTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         http
                 // CSRF禁用,因为不使用session
@@ -132,8 +139,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-ui/**").anonymous()
                 .antMatchers("/v3/**").anonymous()
                 .antMatchers("/swagger-resources/**").anonymous()
-                .antMatchers("/user/login").anonymous()//未登录
+                .antMatchers("/user/login/**").anonymous()//未登录
                 .antMatchers("/user/register").anonymous()//未登录
+                .antMatchers("/userCart/**").anonymous()
+                .antMatchers("/collection/**").anonymous()
+
+                // 除了以上，均要鉴权
+                .antMatchers("/goodsCate/**").anonymous()//未登录
+                .antMatchers("/goods/**").anonymous()//未登录
+                .antMatchers("/order/**").anonymous()//未登录
+                .antMatchers("/files/**").permitAll()
                 // 除了以上，均要鉴权
                 .anyRequest()
                 .authenticated();
@@ -144,15 +159,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     }
+
 //    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService);
-//        auth.authenticationProvider(mobileAuthenticationProvider);
+//    public void configure(WebSecurity web) throws Exception{
+//        web.ignoring().antMatchers("/files/**");
+//
 //    }
 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService);
+        auth.authenticationProvider(mobileAuthenticationProvider);
+        auth.userDetailsService(userdefaultService);
+        auth.authenticationProvider(userNameAuthenticationProvider);
 
-
-
+    }
 
 
 }

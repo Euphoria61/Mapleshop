@@ -29,22 +29,23 @@ public class UserCartController {
     private UserCartService userCartService;
 
     @ApiOperation(value = "显示购物车")
-    @PreAuthorize("hasAuthority('sys:cart:selectAll')")
-    @PostMapping("/selectCart")
+//    @PreAuthorize("hasAuthority('sys:cart:selectAll')")
+    @GetMapping("/selectCart")
     public ResultInfo<List<UserCartVo>> selectCart(@LoginUser Long userId,
                                                    @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
                                                    @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
                                                    UserCart usercart) {
-        usercart.setUserId(userId);
+        usercart.setUserId(1556169985301184514L);
         return ResultInfo.success(userCartService.selectCart(currentPage, pageSize, usercart));
     }
 
 
     @ApiOperation(value = "添加购物车")
-    @PreAuthorize("hasAuthority('sys:cart:addCart')")
+    //@PreAuthorize("hasAuthority('sys:cart:addCart')")
     @PostMapping("/addCart")
     public ResultInfo<Integer> addCart(@LoginUser Long userId, @RequestBody UserCart userCart) {
-        userCart.setUserId(userId);
+        System.out.println(userId);
+        userCart.setUserId(1556169985301184514L);
         return userCartService.addCart(userCart) == 0 ? ResultInfo.failed("添加失败") : ResultInfo.success();
     }
 
@@ -57,9 +58,9 @@ public class UserCartController {
     }
 
     @ApiOperation(value = "删除购物车")
-    @PreAuthorize("hasAuthority('sys:cart:deleteCart')")
-    @PostMapping("/deleteCart")
-    public ResultInfo<Integer> deleteCart(Long[] userCartIds) {
+    //@PreAuthorize("hasAuthority('sys:cart:deleteCart')")
+    @PostMapping("/deleteCart/{userCartIds}")
+    public ResultInfo<Integer> deleteCart(@PathVariable Long[] userCartIds) {
 
         return userCartService.deleteByCartId(userCartIds) == 0
                 ? ResultInfo.failed("删除失败") : ResultInfo.success();

@@ -26,17 +26,17 @@
     <div style="margin: auto 500px; margin-top: 100px">
       <el-form ref="form" :model="form" label-width="60px">
         <el-form-item label="邮件:">
-          <el-input v-model="form.userEmail" placeholder="请输入邮件名"></el-input>
+          <el-input v-model="form.userName" placeholder="请输入邮件名"></el-input>
         </el-form-item>
         <el-form-item label="密码:">
           <el-input v-model="form.userPwd" placeholder="请填写密码" type="password"></el-input>
         </el-form-item>
-        <el-form-item label=" 验证码:">
+        <!-- <el-form-item label=" 验证码:">
           <el-input v-model="form.code" placeholder="请填写验证码"></el-input>
           <img id="code" :src="'/api/validateCode'"/>
           <el-link @click="refreshCode();">看不清，换一个！</el-link>
           <br/>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item style="margin: auto 100px">
           <el-button round type="success" @click="login()"
@@ -81,28 +81,34 @@ export default {
           });
           this.img = res;
           console.log(res);
+        }else {
+          this.$message({
+            type: "error",
+            message: "用户名或密码错误！"
+          })
         }
       })
     },
-    refreshCode() {
-      document.getElementById("code").src = "/api/validateCode?" + Math.random()
-    },
+    // refreshCode() {
+    //   document.getElementById("code").src = "/api/validateCode?" + Math.random()
+    // },
 
     login() {
       console.log(this.form);
-      request.post("/user/login", this.form).then((res) => {
+      request.post("/user/login/0", this.form).then((res) => {
         console.log(res);
-        if (res.code === '0') {
+        if (res.code === 200) {
           this.$message({
             type: "success",
             message: "登录成功！"
           })
-          sessionStorage.setItem("user", JSON.stringify(res.data))//缓存用户信息
+          localStorage.setItem("token", res.data.token);
+          
           this.$router.push("/")
         } else {
           this.$message({
             type: "error",
-            message: res.msg
+            message: "用户名或密码错误！"
           })
         }
       })

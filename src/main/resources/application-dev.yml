@@ -77,21 +77,21 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
-
-rocketmq:
-  producer:
-    max-message-size: 4096
-    retry-times-when-send-failed: 2
-    group-name: shop-producer-group
-    namesrv-addr: 192.168.154.100:9876
-    send-msg-time-out: 300000
-  consumer:
-    group-name: shop-consumer-group
-    namesrv-addr: 192.168.154.100:9876
-    topics: order;coupon
-    consume-thread-min: 5
-    consume-thread-max: 32
-    consume-message-batch-max-size: 1
+#
+#rocketmq:
+#  producer:
+#    max-message-size: 4096
+#    retry-times-when-send-failed: 2
+#    group-name: shop-producer-group
+#    namesrv-addr: 192.168.154.100:9876
+#    send-msg-time-out: 300000
+#  consumer:
+#    group-name: shop-consumer-group
+#    namesrv-addr: 192.168.154.100:9876
+#    topics: order;coupon
+#    consume-thread-min: 5
+#    consume-thread-max: 32
+#    consume-message-batch-max-size: 1
 
 
 

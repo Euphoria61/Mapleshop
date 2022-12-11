@@ -74,11 +74,11 @@
                   shadow=" hover"
                   @click="$router.push({path:'/goodsDetails',query:{gId:goodsList.gid}})"
               >
-                <img :src="'/api/files/'+goodsList.gpicture" class="image"
+                <img :src="'/api/files/'+goodsList.picture" class="image"
                      style="width:200px;height:200px;text-align:center"/>
-                <p>{{ goodsList.gname }}</p>
-                <div><s>¥{{ goodsList.gpriceOld }}</s>
-                  <span class="good-span">¥{{ goodsList.gpriceNew }}</span></div>
+                <p>{{ goodsList.name }}</p>
+                <div><s>¥{{ goodsList.priceOld }}</s>
+                  <span class="good-span">¥{{ goodsList.priceNew }}</span></div>
               </el-card>
             </el-col>
           </el-row>
@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     load() {
-      request.get("/goodsByWord/" + this.word).then((res) => {
+      request.get("/goods/selectByWord/" + this.word).then((res) => {
         console.log(res);
         this.goodsList = res.data
         this.goodsLists = JSON.parse(JSON.stringify(this.goodsList))

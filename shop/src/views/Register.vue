@@ -15,21 +15,21 @@
     <div style="margin:auto 500px;margin-top:100px">
       <el-form ref="form" label-width="60px" style="padding-top:40px">
         <el-form-item label="账号">
-          <el-input v-model="form.userEmail" placeholder="请输入用户名"></el-input>
+          <el-input v-model="form.userName" placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item label="密码">
           <el-input v-model="form.userPwd" placeholder="请填写密码" type="password"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="form.userPwd2" placeholder="请再次填写密码" type="password"></el-input>
+          <el-input v-model="checkUserPwd" placeholder="请再次填写密码" type="password"></el-input>
         </el-form-item>
 
-        <el-form-item label="验证码:">
+        <!-- <el-form-item label="验证码:">
           <el-input v-model="form.code" placeholder="请填写验证码"></el-input>
           <img id="code" :src="'/api/validateCode'"/>
           <el-link @click="refreshCode();">看不清，换一个！</el-link>
           <br/>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item style="margin:auto 150px">
           <el-button round type="success" @click="register">注册</el-button>
@@ -53,12 +53,14 @@ export default {
   },
   data() {
     return {
-      form: []
+      checkUserPwd:"",
+      form: {}
     }
   },
   methods: {
     getCode() {
       request.get("/validateCode").then((res) => {
+        console.log(form);
         console.log(res);
         if (res.code === "0") {
           this.$message({
@@ -70,23 +72,24 @@ export default {
         }
       })
     },
-    refreshCode() {
-      document.getElementById("code").src = "/api/validateCode?" + Math.random()
-    },
+    // refreshCode() {
+    //   document.getElementById("code").src = "/api/validateCode?" + Math.random()
+    // },
 
     register() {
       console.log(this.form);
       request.post("/user/register", this.form).then((res) => {
         console.log(res);
-        if (res.code === '0') {
+        if (res.code === 200) {
           this.$message({
             type: "success",
-            message: "注册成功！"
+            message: "注册成功,请完成登录！"
           })
+           this.$router.push("/login")
         } else {
           this.$message({
             type: "error",
-            message: res.msg
+            message: res.message
           })
         }
       })

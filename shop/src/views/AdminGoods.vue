@@ -32,23 +32,24 @@
       <!--        @selection-change="handleSelectionChange"-->
 
       <el-table-column type="selection" width="40"></el-table-column>
-      <el-table-column label="商品名称" prop="gname"></el-table-column>
+      <el-table-column disabled label="商品ID" prop="goodsId"></el-table-column>
+      <el-table-column label="商品名称" prop="name"></el-table-column>
       <el-table-column label="商品图片">
         <template #default="scope">
           <img
-              :src="'/api/files/' + scope.row.gpicture"
+              :src="'/api/files/' + scope.row.picture"
               class="image"
               style="width: 100px; height: 100px; text-align: center"
           />
         </template>
       </el-table-column>
-      <el-table-column label="原价" prop="gpriceOld" width="80">
+      <el-table-column label="原价" prop="priceOld" width="80">
       </el-table-column>
-      <el-table-column label="现价" prop="gpriceNew" width="80">
+      <el-table-column label="现价" prop="priceNew" width="80">
       </el-table-column>
-      <el-table-column label="商品分类" prop="gtName"></el-table-column>
-      <el-table-column label="库存" prop="gstore" width="85"></el-table-column>
-      <el-table-column label="商品详情" prop="gdetails"></el-table-column>
+      <!-- <el-table-column label="商品分类" prop="gtName"></el-table-column> -->
+      <el-table-column label="库存" prop="store" width="85"></el-table-column>
+      <el-table-column label="商品详情" prop="details"></el-table-column>
       <el-table-column label="是否上架" prop="isShelf" width="85">
       </el-table-column>
 
@@ -58,7 +59,7 @@
               v-if="scope.row.isShelf == 0"
               size="mini"
               type="primary"
-              @click="onShelf(scope.row.gid)"
+              @click="onShelf(scope.row.goodsId)"
           >上架
           </el-button
           >
@@ -97,24 +98,28 @@
       <!-- 编辑弹窗 -->
       <el-dialog v-model="dialogVisible1" title="编辑商品" width="30%">
         <el-form :model="form" label-width="120px">
+<el-form-item label="商品ID">
+            <el-input disabled  v-model="form.goodsId" style="width: 80%"></el-input>
+          </el-form-item>
+
           <el-form-item label="商品名称">
-            <el-input v-model="form.gname" style="width: 80%"></el-input>
+            <el-input v-model="form.name" style="width: 80%"></el-input>
           </el-form-item>
           <el-form-item label="原价">
-            <el-input v-model="form.gpriceOld" style="width: 80%"></el-input>
+            <el-input v-model="form.priceOld" style="width: 80%"></el-input>
           </el-form-item>
           <el-form-item label="现价">
-            <el-input v-model="form.gpriceNew" style="width: 80%"></el-input>
+            <el-input v-model="form.priceNew" style="width: 80%"></el-input>
           </el-form-item>
 
           <el-form-item label="库存">
-            <el-input v-model="form.gstore" style="width: 80%"></el-input>
+            <el-input v-model="form.store" style="width: 80%"></el-input>
           </el-form-item>
 
 
           <el-form-item label="商品详情">
             <el-input
-                v-model="form.gdetails"
+                v-model="form.details"
                 style="width: 80%"
                 type="textarea"
             ></el-input>
@@ -127,14 +132,15 @@
           </span>
         </template>
       </el-dialog>
+
       <!-- 添加弹窗 -->
       <el-dialog v-model="dialogVisible2" title="新增商品" width="30%">
         <el-form :model="form2" enctype="multipart/form-data" label-width="120px">
           <el-form-item label="商品名称">
-            <el-input v-model="form2.gName" style="width: 80%"></el-input>
+            <el-input v-model="form2.name" style="width: 80%"></el-input>
           </el-form-item>
 
-          <el-form-item label="商品分类">
+          <!-- <el-form-item label="商品分类">
             <el-select
                 v-model="form2.gtId"
                 :loading="loading"
@@ -150,23 +156,42 @@
                   :value="item.gtId"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
+<!-- 
+
+            <el-form-item label="商品分类">
+            <el-select
+                v-model="form2.gtId"
+                :loading="loading"
+                :remote-method="remoteMethod"
+                filterable
+                remote
+                reserve-keyword
+            >
+              <el-option
+                  v-for="item in options"
+                  :key="item.gtId"
+                  :label="item.gtName"
+                  :value="item.gtId"
+              />
+            </el-select>
+          </el-form-item> -->
 
           <el-form-item label="原价">
-            <el-input v-model="form2.gPriceOld" style="width: 80%"></el-input>
+            <el-input v-model="form2.priceOld" style="width: 80%"></el-input>
           </el-form-item>
           <el-form-item label="现价">
-            <el-input v-model="form2.gPriceNew" style="width: 80%"></el-input>
+            <el-input v-model="form2.priceNew" style="width: 80%"></el-input>
           </el-form-item>
 
           <el-form-item label="库存">
-            <el-input v-model="form2.gStore" style="width: 80%"></el-input>
+            <el-input v-model="form2.store" style="width: 80%"></el-input>
           </el-form-item>
 
           <el-form-item label="商品图片">
             <el-input
                 id="file"
-                v-model="form2.image"
+                v-model="form2.picture"
                 style="width: 80%"
                 type="file"
             ></el-input>
@@ -174,7 +199,7 @@
 
           <el-form-item label="商品详情">
             <el-input
-                v-model="form2.gDetails"
+                v-model="form2.details"
                 style="width: 80%"
                 type="textarea"
             ></el-input>
@@ -207,8 +232,8 @@ export default {
       dialogVisible2: false,
       search: "",
       currentPage: 1,
-      pageSize: 10,
-      total: 0,
+      pageSize: 20,
+      total: 43,
 
       tableData: [],
       selectType: "",
@@ -223,6 +248,7 @@ export default {
   methods: {
     remoteMethod(selectType) {
       request.get("/admin/allGoodsType").then((res) => {
+        
         this.options = res.data.filter((item) => {
           return item.gtName.includes(selectType);
         });
@@ -231,16 +257,12 @@ export default {
 
     select() {
       request
-          .get("/admin/search/" + this.search, {
-            params: {
-              pageNum: this.currentPage,
-              pageSize: this.pageSize,
-            },
-          })
+          .post("/goods/selectGoodsById/" + this.search)
           .then((res) => {
-            this.tableData = res.data.data;
-            this.total = res.data.total;
-            console.log(this.tableData);
+            
+            this.tableData = res.data;
+            this.load()
+           
           });
     },
 
@@ -289,35 +311,39 @@ export default {
     load() {
       this.loading = true;
       request
-          .get("/admin/allGoods", {
+          .get("/goods/selectGoods", {
             params: {
-              pageNum: this.currentPage,
+              currentPage: this.currentPage,
               pageSize: this.pageSize,
             },
           })
           .then((res) => {
+            console.log(res);
+            
             this.loading = false;
-            this.tableData = res.data.data;
-            this.total = res.data.total;
+            this.tableData = res.data.goodsList;
+            this.total = res.data.total 
+            
+            
           });
     },
     add() {
       let forms = new FormData();
       //文件部分
-      forms.append("image", document.querySelector('input[type=file]').files[0]);
-      forms.append("gDetails", this.form2.gDetails);
-      forms.append("gName", this.form2.gName);
-      forms.append("gtId", this.form2.gtId);
-      forms.append("gStore", this.form2.gStore);
-      forms.append("gPriceNew", this.form2.gPriceNew);
-      forms.append("gPriceOld", this.form2.gPriceOld);
+      forms.append("picture", document.querySelector('input[type=file]').files[0]);
+      forms.append("details", this.form2.details);
+      forms.append("name", this.form2.name);
+      // forms.append("goodsCateId", this.form2.gtId);
+      forms.append("store", this.form2.store);
+      forms.append("priceNew", this.form2.priceNew);
+      forms.append("priceOld", this.form2.priceOld);
       request
           .post(
-              "/admin/addGoods", forms
+              "/goods/addGoods", forms
           )
           .then((res) => {
             this.dialogVisible2 = false
-            if (res.code === "0") {
+            if (res.code === 200) {
               this.$message({
                 type: "success",
                 message: "添加成功！",
@@ -325,23 +351,33 @@ export default {
             } else {
               this.$message({
                 type: "error",
-                message: res.msg,
+                message: res.message,
               });
             }
           });
     },
     save() {
-      console.log(this.form);
-      request.put("/admin/updateGoods", this.form).then((res) => {
-        if (res.code === "0") {
+       let forms = new FormData();
+      //文件部分
+       forms.append("goodsId", this.form.goodsId);
+      forms.append("details", this.form.details);
+      forms.append("name", this.form.name);
+      // forms.append("goodsCateId", this.form2.gtId);
+      forms.append("store", this.form.store);
+      forms.append("priceNew", this.form.priceNew);
+      forms.append("priceOld", this.form.priceOld);
+      console.log(this.forms);
+      request.post("/goods/addGoods", forms).then((res) => {
+        console.log(res);
+        if (res.code === 200) {
           this.$message({
             type: "success",
-            message: "更新成功",
+            message: "更新成功!"  ,
           });
         } else {
           this.$message({
             type: "error",
-            message: res.msg,
+            message: "更新错误！",
           });
         }
         this.load(); // 刷新表格的数据
@@ -364,9 +400,9 @@ export default {
       this.pageSize = pageSize;
       this.load();
     },
-    handleCurrentChange(pageNum) {
+    handleCurrentChange(currentPage) {
       // 改变当前页码触发
-      this.currentPage = pageNum;
+      this.currentPage = currentPage;
       this.load();
     },
   },

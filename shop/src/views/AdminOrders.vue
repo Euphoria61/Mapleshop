@@ -2,7 +2,7 @@
   <div style="padding: 10px">
     <!--    搜索区域-->
     <div style="margin: 10px 0">
-      商品Id：
+      <!-- 商品Id：
       <el-input
           v-model="goodsOrder.gId"
           clearable
@@ -19,7 +19,7 @@
           style="width: 20%"
       ></el-input
       >
-      <br/>
+      <br/> -->
       订单状态：
       <el-select
           v-model="goodsOrder.status"
@@ -62,13 +62,16 @@
         style="width: 100%"
     >
       <el-table-column type="selection" width="40"></el-table-column>
-      <el-table-column label="订单号" prop="gOId"></el-table-column>
+      <el-table-column label="订单号" prop="orderNo"></el-table-column>
 
-      <el-table-column label="用户Id" prop="userId"></el-table-column>
-      <el-table-column label="商品Id" prop="gId"></el-table-column>
-      <el-table-column :formatter="stateFormat" label="订单状态" prop="status">
+      <el-table-column label="订单物流ID" prop="orderLogisticsId"></el-table-column>
+      <!-- <el-table-column label="商铺ID" prop="gId"></el-table-column> -->
+      <el-table-column label="商品数量(件)" prop="goodsCount"></el-table-column>
+      <el-table-column label="商品总价(元)" prop="goodsAmountTotal"></el-table-column>
+      <el-table-column label="订单实付金额(元)" prop="goodsAmountTotal"></el-table-column>
+      <el-table-column :formatter="stateFormat" label="订单状态" prop="orderStatus">
       </el-table-column>
-      <el-table-column label="创建时间" prop="createDate"></el-table-column>
+      <el-table-column label="创建时间" prop="createTime"></el-table-column>
 
       <el-table-column label="操作" width="240">
         <template #default="scope">
@@ -194,28 +197,31 @@ export default {
     },
     //     （订单取消）-2 付款失败-1   未付款：0  (已支付)未发货：1  撤销订单（退款）：2  已发货：3 派送中：4  待取件：5   已签收：6 "订单完成"
     stateFormat(row) {
-      if (row.status == 0) return "未付款";
-      if (row.status == 1) return "未发货";
-      if (row.status == 2) return "已撤销订单";
-      if (row.status == 3) return "已发货";
-      if (row.status == 4) return "派送中";
-      if (row.status == 5) return "待取件";
-      if (row.status == 6) return "已签收";
-      if (row.status == 7) return "订单完成";
+      if (row.orderStatus == 0) return "未付款";
+      if (row.orderStatus == 1) return "未发货";
+      if (row.orderStatus == 2) return "已撤销订单";
+      if (row.orderStatus == 3) return "已发货";
+      if (row.orderStatus == 4) return "派送中";
+      if (row.orderStatus == 5) return "待取件";
+      if (row.orderStatus == 6) return "已签收";
+      if (row.orderStatus == 7) return "订单完成";
     },
 
     load() {
       this.loading = true;
       console.log(JSON.stringify(this.goodsOrder));
       request
-          .post(
-              "/admin/goodsOrder/" + this.currentPage + "/" + this.pageSize,
-              this.goodsOrder
+          .get(
+              "/order/selectOrder" ,{params:{
+                currentPage: this.currentPage,
+              pageSize: this.pageSize,
+              }}
           )
           .then((res) => {
+            console.log(res);
             this.loading = false;
-            this.tableData = res.data.data;
-            console.log(this.tableData);
+            this.tableData = res.data.orderList;
+          
             this.total = res.data.total;
           });
     },

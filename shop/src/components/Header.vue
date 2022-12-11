@@ -12,7 +12,7 @@
           :underline="false"
           style="font-size: 4px"
           @click="$router.push('/login')"
-      >{{ userEmail == "" ? "欢迎您，请先登录" : userEmail }}
+      >{{ userName != "已登录" ? "欢迎您，请先登录" : "已登录" }}
       </el-link
       >
     </div>
@@ -56,14 +56,14 @@ export default {
   name: "Header.vue",
   data() {
     return {
-      userEmail: "",
-
+      userName:"",
     };
   },
   methods: {
     load() {
-      if (JSON.parse(sessionStorage.getItem("user")) != null) this.userEmail = JSON.parse(sessionStorage.getItem("user")).userEmail
-
+      console.log(JSON.parse(sessionStorage.getItem("user"))!= null);
+      if(JSON.parse(sessionStorage.getItem("user")) != null) this.userName ="已登录";
+      console.log(this.userName);
     },
   },
   created() {

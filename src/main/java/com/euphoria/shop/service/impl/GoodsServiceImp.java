@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.euphoria.shop.entity.vo.GoodsToVo;
 import com.euphoria.shop.service.GoodsService;
 import com.euphoria.shop.entity.Goods;
 import com.euphoria.shop.entity.GoodsCate;
@@ -35,16 +36,24 @@ public class GoodsServiceImp extends ServiceImpl<GoodsMapper, Goods> implements 
     @Autowired
     private GoodsMapper goodsMapper;
 
-    //// TODO: 2022/9/15  mysql redis 数据一致性 
+
 
     @Override
-    public List<Goods> selectShelfedGoods(int currentPage, int pageSize) {
+    public GoodsToVo selectShelfedGoods(int currentPage, int pageSize) {
         Page<Goods> goodsPage = new Page<>(
                 currentPage, pageSize);
         Page<Goods> page = new LambdaQueryChainWrapper<>(baseMapper)
                 .eq(Goods::getIsShelf, 1)
                 .page(goodsPage);
-        return page.getRecords();
+
+        GoodsToVo goodsToVo = new GoodsToVo();
+        goodsToVo.setCurrentPage(currentPage);
+        goodsToVo.setPageSize(pageSize);
+        goodsToVo.setGoodsList(page.getRecords());
+        goodsToVo.setTotal(page.getTotal());
+
+
+        return goodsToVo;
     }
 
     @Override
@@ -57,6 +66,7 @@ public class GoodsServiceImp extends ServiceImpl<GoodsMapper, Goods> implements 
                         .like(GoodsCate::getName, cate)
                         .eq(Goods::getIsShelf, 1)
         );
+
         return goodsPage.getRecords();
     }
 
@@ -79,34 +89,40 @@ public class GoodsServiceImp extends ServiceImpl<GoodsMapper, Goods> implements 
 
     @Override
     public int saveOrUpdateGoods(GoodsVo goodsVo) throws FileNotFoundException {
+        System.out.println("============================"+goodsVo.getGoodsId());
+        System.out.println(goodsVo);
         String newFileName = "";
-        String fileName = goodsVo.getPicture().getOriginalFilename();
-        //选择文件
-        if (fileName.length() > 0) {
-            String path = ResourceUtils.getURL("classpath:").getPath() + "static/picture/goodsPicture";
-            String realpath = path.replace('/', '\\').substring(1, path.length());
-            //实现文件上传
-            String fileType = fileName.substring(fileName.lastIndexOf('.'));
-            //防止文件名重名
-            newFileName = UUID.randomUUID() + fileType;
-            File targetFile = new File(realpath, newFileName);
-            if (!targetFile.exists()) {
-                targetFile.mkdirs();
+        if(goodsVo.getGoodsId() == null) {
+            String fileName = goodsVo.getPicture().getOriginalFilename();
+            //选择文件
+            if (fileName.length() > 0) {
+                String path = ResourceUtils.getURL("classpath:").getPath() + "static/picture/goodsPicture";
+                String realpath = path.replace('/', '\\').substring(1, path.length());
+                //实现文件上传
+                String fileType = fileName.substring(fileName.lastIndexOf('.'));
+                //防止文件名重名
+                newFileName = UUID.randomUUID() + fileType;
+                File targetFile = new File(realpath, newFileName);
+                if (!targetFile.exists()) {
+                    targetFile.mkdirs();
+                }
+                //上传
+                try {
+                    goodsVo.getPicture().transferTo(targetFile);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            //上传
-            try {
-                goodsVo.getPicture().transferTo(targetFile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        }
             Goods goods = new Goods();
             BeanUtils.copyProperties(goodsVo, goods);
-            goods.setPicture(newFileName);
-            System.out.println(goods);
+            if(goodsVo.getGoodsId() == null) {
+            goods.setPicture(newFileName);}
+            if(goodsVo == null)goodsVo.setIsShelf(1);
             if (this.saveOrUpdate(goods)) {
                 return 1;
             }
-        }
+
         return 0;
 
 
@@ -131,6 +147,11 @@ public class GoodsServiceImp extends ServiceImpl<GoodsMapper, Goods> implements 
     public int incrGoodsStore(Long goodsId, Long goodsCount) {
         this.update(new UpdateWrapper<Goods>().eq("goods_id", goodsId).setSql("store = store + " + goodsCount));
         return 0;
+    }
+
+    @Override
+    public Goods selectGoodsDetails(Long gid) {
+        return baseMapper.selectById(gid);
     }
 
 }

@@ -79,25 +79,25 @@
                 :span="6"
                 style="margin-top: 10px"
             >
-              <el-checkbox v-model="ids" :label="goodsList.gid" size="large">
+              <el-checkbox v-model="ids" :label="goodsList.collectionId" size="large">
                 <h3 v-if="goodsList.isShelf ==0">抱歉，该商品已经下架！</h3>
               </el-checkbox>
               <el-card
 
                   :body-style="{ height: '300px' }"
                   shadow=" hover"
-                  @click="$router.push({path:'/goodsDetails',query:{gId:goodsList.gid}})"
+                  @click="$router.push({path:'/goodsDetails',query:{gId:goodsList.goodsId}})"
               >
 
                 <img
-                    :src="'/api/files/' + goodsList.gpicture"
+                    :src="'/api/files/' + goodsList.picture"
                     class="image"
                     style="width: 200px; height: 200px; text-align: center"
                 />
-                <p>{{ goodsList.gname }}</p>
+                <p>{{ goodsList.name }}</p>
                 <div>
-                  <s>¥{{ goodsList.gpriceOld }}</s>
-                  <span class="good-span">¥{{ goodsList.gpriceNew }}</span>
+                  <s>¥{{ goodsList.priceOld }}</s>
+                  <span class="good-span">¥{{ goodsList.priceNew }}</span>
                 </div>
               </el-card>
             </el-col>
@@ -148,30 +148,30 @@ export default {
   },
   methods: {
     load() {
-      if (JSON.parse(sessionStorage.getItem("user")) != null) this.userId = JSON.parse(sessionStorage.getItem("user")).userId
-      if (this.userId != 0) {
+      // if (JSON.parse(sessionStorage.getItem("user")) != null) this.userId = JSON.parse(sessionStorage.getItem("user")).userId
+      // if (this.userId != 0) {
         request
-            .get("/selectAllCollected/" + this.userId, {
+            .get("/collection/selectAllCollection" , {
               params: {
-
                 pageNum: this.currentPage,
                 pageSize: this.pageSize,
               },
             })
             .then((res) => {
-              this.goodsList = res.data.data;
+              console.log(res);
+              this.goodsList = res.data;
               this.goodsLists = JSON.parse(JSON.stringify(this.goodsList));
               this.total = res.data.total;
-
+              console.log(goodsLists);
               for (var i = 0; i < this.goodsLists.length; i++) {
-                this.allIds[i] = this.goodsLists[i].gid
+                this.allIds[i] = this.goodsLists[i].goodsId
 
               }
 
             });
-      } else {
-        this.$router.push("/login")
-      }
+      // } else {
+      //   this.$router.push("/login")
+      // }
 
     },
     handleSizeChange(pageSize) {

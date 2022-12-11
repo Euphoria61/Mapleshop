@@ -69,9 +69,9 @@
             style="width: 100%; margin-top: 20px"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column label="商品名称" prop="gName" width="130">
+          <el-table-column label="商品名称" prop="goodsName" width="130">
           </el-table-column>
-          <el-table-column label="商品图片" width="150">
+          <!-- <el-table-column label="商品图片" width="150">
             <template #default="scope">
               <img
                   :src="'/api/files/' + scope.row.gPicture"
@@ -79,38 +79,37 @@
                   style="width: 100px; height: 100px; text-align: center"
               />
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
-          <el-table-column label="购买数量" prop="sCount" width="120">
+          <el-table-column label="购买数量" prop="goodsCount" width="120">
           </el-table-column>
 
           <el-table-column label="金额" width="100">
-            <template #default="scope"> ¥{{ scope.row.gPrice_new }}</template>
+            <template #default="scope"> ¥{{ scope.row.goodsAmountTotal }}</template>
           </el-table-column>
           <el-table-column
               :formatter="stateFormat"
               label="状态"
-              prop="status"
+              prop="orderStatus"
               width="120"
           >
           </el-table-column>
 
-          <el-table-column label="时间" prop="createDate" sortable width="200">
+          <el-table-column label="时间" prop="createTime" sortable width="200">
           </el-table-column>
 
           <el-table-column label="可选操作">
             <template #default="scope">
               <el-button
-                  v-if="scope.row.status == 0"
+                  v-if="scope.row.orderStatus == 0"
                   size="mini"
                   type="primary"
                   @click="buyGood(scope.row)"
               >付款
               </el-button
               >
-
               <el-button
-                  v-if="scope.row.status == 6"
+                  v-if="scope.row.orderStatus == 6"
                   size="mini"
                   type="success"
                   @click="commentview(scope.row)"
@@ -118,7 +117,7 @@
               </el-button
               >
               <el-popconfirm
-                  v-if="scope.row.status == 1"
+                  v-if="scope.row.orderStatus == 1"
                   title="确定退款吗？"
                   @confirm="handleDelete(scope.row)"
               >
@@ -243,25 +242,24 @@ export default {
       this.diacomment = true;
     },
     stateFormat(row) {
-      if (row.status == -2) return "已退款";
-      if (row.status == -1) return "付款失败";
-      if (row.status == 0) return "未付款";
-      if (row.status == 1) return "未发货";
-      if (row.status == 2) return "已撤销订单";
-      if (row.status == 3) return "已发货";
-      if (row.status == 4) return "派送中";
-      if (row.status == 5) return "待取件";
-      if (row.status == 6) return "已签收";
-      if (row.status == 7) return "订单完成";
+      if (row.orderStatus == -2) return "已退款";
+      if (row.orderStatus == -1) return "付款失败";
+      if (row.orderStatus == 0) return "未付款";
+      if (row.orderStatus == 1) return "未发货";
+      if (row.orderStatus == 2) return "已撤销订单";
+      if (row.orderStatus == 3) return "已发货";
+      if (row.orderStatus == 4) return "派送中";
+      if (row.orderStatus == 5) return "待取件";
+      if (row.orderStatus == 6) return "已签收";
+      if (row.orderStatus == 7) return "订单完成";
     },
     load() {
-      if (JSON.parse(sessionStorage.getItem("user")) != null) this.userId = JSON.parse(sessionStorage.getItem("user")).userId
-      console.log(this.userId);
-      if (this.userId != 0) {
-        request
+      // if (JSON.parse(sessionStorage.getItem("user")) != null) this.userId = JSON.parse(sessionStorage.getItem("user")).userId
+      // console.log(this.userId);
+      // if (this.userId != 0) {
+         request
             .get(
-                "/myGoodsOrder/" +
-                JSON.parse(sessionStorage.getItem("user")).userId,
+                "/order/selectOrderByUserId",              
                 {
                   params: {
                     pageNum: this.currentPage,
@@ -270,13 +268,14 @@ export default {
                 }
             )
             .then((res) => {
-              this.tableData = res.data.data;
-              this.total = res.data.total;
               console.log(res);
+              this.tableData = res.data.orderList;
+              this.total = res.data.total;
+             ;
             });
-      } else {
-        this.$router.push("/login");
-      }
+      // } else {
+      //   this.$router.push("/login");
+      // }
     },
     buyGood(row) {
       console.log(row);

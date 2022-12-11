@@ -79,8 +79,8 @@
                 :span="6"
                 style="margin-top: 10px"
             >
-              <el-checkbox v-model="ids" :label="goodsList.gid" size="large">
-                <h3 v-if="goodsList.sCount >goodsList.store">抱歉，仅剩{{ goodsList.store }}件!</h3>
+              <el-checkbox v-model="ids" :label="goodsList.userCartId" size="large">
+                <h3 v-if="goodsList.goodsCount >goodsList.store">抱歉，仅剩{{ goodsList.store }}件!</h3>
               </el-checkbox>
               <el-card
 
@@ -90,15 +90,15 @@
               >
 
                 <img
-                    :src="'/api/files/' + goodsList.gpicture"
+                    :src="'/api/files/' + goodsList.picture"
                     class="image"
                     style="width: 200px; height: 200px; text-align: center"
                 />
-                <p>{{ goodsList.gname }}</p>
-                <p>{{ goodsList.scount }}</p>
+                <p>{{ goodsList.name }}</p>
+                <p>{{ goodsList.goodsCount }}</p>
                 <div>
-                  <s>¥{{ goodsList.gpriceOld }}</s>
-                  <span class="good-span">¥{{ goodsList.gpriceNew }}</span>
+                  <s>¥{{ goodsList.priceOld }}</s>
+                  <span class="good-span">¥{{ goodsList.priceNew }}</span>
                 </div>
               </el-card>
             </el-col>
@@ -139,23 +139,23 @@ export default {
   },
   methods: {
     load() {
-      if (JSON.parse(sessionStorage.getItem("user")) != null) this.userId = JSON.parse(sessionStorage.getItem("user")).userId
-      if (this.userId != 0) {
+      // if (JSON.parse(sessionStorage.getItem("user")) != null) this.userId = JSON.parse(sessionStorage.getItem("user")).userId
+      // if (this.userId != 0) {
         request
-            .get("/selectCartGoods/" + this.userId)
+            .get("/userCart/selectCart")
             .then((res) => {
               this.goodsList = res.data;
               this.goodsLists = JSON.parse(JSON.stringify(this.goodsList));
 
               for (var i = 0; i < this.goodsLists.length; i++) {
-                this.allIds[i] = this.goodsLists[i].gid
+                this.allIds[i] = this.goodsLists[i].gId
 
               }
 
             });
-      } else {
-        this.$router.push("/login")
-      }
+      // } else {
+      //   // this.$router.push("/login")
+      // }
 
     },
 
@@ -163,10 +163,22 @@ export default {
       this.ids = val ? this.allIds : [];
       this.isIndeterminate = false;
     },
+    //删除购物车商品
     deleteCollections() {
       console.log(this.ids);
-      request.delete("/deleteCartGoods/" + this.userId + "/" + this.ids).then(res => {
-        this.load()
+      request.post("/userCart/deleteCart/"+this.ids).then(res => {
+        console.log(res.message);
+         if (res.code === 200) {
+              this.$message.success("删除成功！");
+              this.load();
+            } else {
+              this.$message({
+                type: "error",
+                message: "删除失败！"
+              });
+          
+            }
+        
       })
 
     }

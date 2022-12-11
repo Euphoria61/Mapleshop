@@ -21,7 +21,7 @@ public interface UserService extends IService<User> {
 
     void Register(User user);
 
-    ResultInfo login(User user, HttpServletRequest request);
+    ResultInfo login(User user,int type,HttpServletRequest request);
 
     ResultInfo checkUserName(String username);
 }

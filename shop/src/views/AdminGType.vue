@@ -3,14 +3,14 @@
     <!--    功能区域-->
     <div style="margin: 10px 0">
       <el-button type="primary" @click="dialogVisible = true">新增</el-button>
-      <el-popconfirm title="确定删除吗？" @confirm="deleteBatch">
+      <!-- <el-popconfirm title="确定删除吗？" @confirm="deleteBatch">
         <template #reference>
           <el-button type="danger">批量删除</el-button>
         </template>
-      </el-popconfirm>
+      </el-popconfirm> -->
     </div>
     <!--    搜索区域-->
-    <div style="margin: 10px 0">
+    <!-- <div style="margin: 10px 0">
       <el-input
           v-model="search"
           clearable
@@ -21,7 +21,7 @@
       >查询
       </el-button
       >
-    </div>
+    </div> -->
     <el-table
         v-loading="loading"
         :data="tableData"
@@ -33,13 +33,13 @@
       <!--        @selection-change="handleSelectionChange"-->
 
       <el-table-column type="selection" width="40"></el-table-column>
-      <el-table-column label="商品分类" prop="gtName"></el-table-column>
+      <el-table-column label="商品分类" prop="name"></el-table-column>
 
       <el-table-column label="操作" width="600">
         <template #default="scope">
           <el-popconfirm
               title="确定删除吗？"
-              @confirm="handleDelete(scope.row.gtId)"
+              @confirm="handleDelete(scope.row.goodsCateId)"
           >
             <template #reference>
               <el-button size="mini" type="danger">删除</el-button>
@@ -52,7 +52,7 @@
     <el-dialog v-model="dialogVisible" title="商品信息" width="30%">
       <el-form :model="form" label-width="120px">
         <el-form-item label="商品类别">
-          <el-input v-model="newType" style="width: 80%"></el-input>
+          <el-input v-model="form.name" style="width: 80%"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -85,11 +85,12 @@ export default {
   components: {},
   data() {
     return {
-      newType: "",
+      
       loading: true,
       //   form: {},
       dialogVisible: false,
       search: '',
+      form:{},
       //   currentPage: 1,
       //   pageSize: 10,
       //   total: 0,
@@ -133,14 +134,14 @@ export default {
       this.loading = true;
       request
           .get(
-              "/admin/allGoodsType"
-              // {
-              //   params: {
-              //     pageNum: this.currentPage,
-              //     pageSize: this.pageSize,
-              //     search: this.search
-              //   }
-              // }
+              "/goodsCate/selectAllCate",
+              {
+                params: {
+                  currentPage: this.currentPage,
+                  pageSize: this.pageSize,
+                  
+                }
+              }
           )
           .then((res) => {
             this.loading = false;
@@ -150,14 +151,13 @@ export default {
           });
     },
     add() {
-
-
-      request.put("/admin/addGType/" + this.newType).then((res) => {
-        if (res.code === "0") {
+    
+      request.post("/goodsCate/addCate",this.form).then((res) => {
+        if (res.code === 200) {
           this.dialogVisible = false;
           this.load();
           this.$message.success("添加成功！");
-          this.load();
+          
         } else {
           this.$message.error(res.msg);
         }
@@ -174,10 +174,10 @@ export default {
     //       })
 
     //     },
-    handleDelete(gtId) {
-      console.log(gtId);
-      request.delete("/admin/deleteGType/" + gtId).then((res) => {
-        if (res.code === "0") {
+    handleDelete(goodsCateId) {
+      console.log(goodsCateId);
+      request.post("/goodsCate/deleteCate/" + goodsCateId).then((res) => {
+        if (res.code === 200) {
           this.$message({
             type: "success",
             message: "删除成功",

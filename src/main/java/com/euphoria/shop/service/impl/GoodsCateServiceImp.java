@@ -45,11 +45,11 @@ public class GoodsCateServiceImp extends ServiceImpl<GoodsCateMapper, GoodsCate>
     @Override
     public int deleteCate(Integer goodsCateId) {
         //  Long res = goodsMapper.selectCount(new QueryWrapper<Goods>().select("cid").eq("cid", goodsCateId));//  4ms
-        List<Goods> res = goodsMapper.selectList(new QueryWrapper<Goods>().select("cid").eq("cid", goodsCateId)); //3ms
-        if (res.isEmpty()) {
+//        List<Goods> res = goodsMapper.selectList(new QueryWrapper<Goods>().select("cid").eq("cid", goodsCateId)); //3ms
+//        if (res.isEmpty()) {
             baseMapper.deleteById(goodsCateId);
             return 1;
-        }
-        return 0;
+//        }
+//        return 0;
     }
 }

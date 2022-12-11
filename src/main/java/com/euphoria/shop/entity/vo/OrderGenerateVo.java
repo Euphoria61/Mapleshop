@@ -15,25 +15,30 @@ import java.math.BigDecimal;
  * @date: 2022/8/18 10:38
  */
 @Data
-@ApiModel(value = "OrderConfirmVo", description = "订单生成")
+@ApiModel(value = "OrderGenerateVo", description = "订单生成")
 public class OrderGenerateVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("地址信息")
-    private String orderAddress;
+//    @ApiModelProperty("地址信息")
+//    private String orderAddress;
+//
+//    @ApiModelProperty("真实姓名")
+//    private String realName;
 
-    @ApiModelProperty("真实姓名")
+    @ApiModelProperty("商品ID")
+    private Long goodsId;
 
-    private String realName;
+    @ApiModelProperty("商品名称")
+    private String goodsName;
+//
+//    @ApiModelProperty("地址信息")
+//    private String telephone;
 
-    @ApiModelProperty("地址信息")
-    private String telephone;
+//    @ApiModelProperty("商品信息")
+//    private Goods goods;
 
-    @ApiModelProperty("商品信息")
-    private Goods goods;
-
-    @ApiModelProperty("店铺信息")
-    private Shop shop;
+//    @ApiModelProperty("店铺信息")
+//    private Shop shop;
 
     @ApiModelProperty("商品数量")
     private Long goodsCount;

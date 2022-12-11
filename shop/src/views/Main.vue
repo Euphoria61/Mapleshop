@@ -276,17 +276,17 @@
               <el-card
                   :body-style="{ height: '300px' }"
                   shadow=" hover"
-                  @click="$router.push({path:'/goodsDetails',query:{gId:goodsList.gid}})"
+                  @click="$router.push({path:'/goodsDetails',query:{gId:goodsList.goodsId}})"
               >
                 <img
-                    :src="'/api/files/' + goodsList.gpicture"
+                    :src="'/api/files/' + goodsList.picture"
                     class="image"
                     style="width: 200px; height: 200px; text-align: center"
                 />
-                <p>{{ goodsList.gname }}</p>
+                <p>{{ goodsList.name }}</p>
                 <div>
-                  <s>¥{{ goodsList.gpriceOld }}</s>
-                  <span class="good-span">¥{{ goodsList.gpriceNew }}</span>
+                  <s>¥{{ goodsList.priceOld }}</s>
+                  <span class="good-span">¥{{ goodsList.priceNew }}</span>
                 </div>
               </el-card>
             </el-col>
@@ -339,16 +339,18 @@ export default {
   methods: {
     load() {
       request
-          .get("/goodsShelfed", {
-            params: {
-              pageNum: this.currentPage,
+          .get("/goods/selectGoods", 
+          {params: {
+              currentPage: this.currentPage,
               pageSize: this.pageSize,
-            },
-          })
+            }}
+          )
           .then((res) => {
-            this.goodsList = res.data.data;
+            console.log(res);
+            this.goodsList = res.data.goodsList;
             this.goodsLists = JSON.parse(JSON.stringify(this.goodsList));
             this.total = res.data.total;
+            
 
           });
     },

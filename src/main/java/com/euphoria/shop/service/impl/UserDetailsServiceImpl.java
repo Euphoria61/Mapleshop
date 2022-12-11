@@ -8,6 +8,7 @@ import com.euphoria.shop.entity.User;
 import com.euphoria.shop.mapper.MenuMapper;
 import com.euphoria.shop.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,7 +24,7 @@ import java.util.Objects;
  * @description: 用户名密码登录
  * @date: 2022/8/6 10:39
  */
-@Service
+@Service("UserDetailsServiceImpl")
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserMapper userMapper;

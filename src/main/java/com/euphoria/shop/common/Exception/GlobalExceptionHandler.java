@@ -36,9 +36,9 @@ public class GlobalExceptionHandler {
         System.out.println("出错");
         return ResultInfo.failed(e.getMessage());
     }
-//    @ExceptionHandler(value = Exception.class)
-//    @ResponseBody
-//    public ResultInfo<?> exceptionHandler(Exception e) {
-//        return ResultInfo.failed(e.getMessage());
-//    }
+    @ExceptionHandler(value = Exception.class)
+    @ResponseBody
+    public ResultInfo<?> exceptionHandler(Exception e) {
+        return ResultInfo.failed(e.getMessage());
+    }
 }
