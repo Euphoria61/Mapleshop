@@ -31,7 +31,7 @@ public class UserNameAuthenticationProvider implements AuthenticationProvider {
     @Qualifier("UserDetailsServiceImpl")
     private UserDetailsService userDetailsService;
 //    @Autowired
-//    private PasswordEncoder passwordEncoder;
+// /   private PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
